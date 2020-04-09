@@ -1,0 +1,119 @@
+---
+variable name: BIAinfo
+use objects: True
+data:
+  - First Name: Benjamin
+    Last Name: Alderson
+    Age: 20
+    Hobbies: Video games
+    Likes Pets: True
+  - First Name: Charles
+    Last Name: Alderson
+    Age: 22
+    Hobbies: Movies
+    Likes Pets: True
+  - First Name: Ian
+    Last Name: Alderson
+    Age: 44
+    Hobbies: Television
+    Likes Pets: True
+  - First Name: Julie
+    Last Name: Alderson
+    Age: 44
+    Hobbies: Sewing
+    Likes Pets: True
+---
+mandatory: True
+question:  Family data
+subquestion: |  
+  Here is the data for the family members
+  
+  ${ BIAcolumn_header }
+  ${ BIAdashes }
+  %for BIAitem in BIAtable_rows:
+  ${ BIAitem }
+  %endfor
+  
+buttons:
+  - Continue: continue
+---
+code: |
+  BIAcolumn_header = ""
+  
+  for BIAitem in BIAinfo[0]:
+    BIAcolumn_header += BIAitem + '|'
+  
+  BIAcolumn_header = BIAcolumn_header[:-1]
+---
+code: |
+  BIAdashes = "---"
+  for i in range(len(BIAinfo[0]) - 1):
+    BIAdashes += "|---"
+---
+code: | 
+  BIAtable_rows = []
+  
+  for BIAitem in BIAinfo:
+      MDrow = ""
+      for BIAkey in BIAitem:
+        MDrow += str(BIAitem[BIAkey]) + '|'
+      MDrow = MDrow[:-1]
+      BIAtable_rows.append(MDrow)
+---
+variable name: BIAquestions
+use objects: True
+data:
+  - BIAquestion: Is the following information correct for Benjamin
+    BIAchoices:
+      - 'First Name: Benjamin'
+      - 'Last Name: Alderson'
+      - 'Age: 20'
+      - 'Hobbies: Video games'
+      - 'Likes Pets: True'
+  - BIAquestion: Is the following information correct for Charles
+    BIAchoices:
+      - 'First Name: Charles'
+      - 'Last Name: Alderson'
+      - 'Age: 22'
+      - 'Hobbies: Movies'
+      - 'Likes Pets: True'
+  - BIAquestion: Is the following information correct for Ian
+    BIAchoices:
+      - 'First Name: Ian'
+      - 'Last Name: Alderson'
+      - 'Age: 44'
+      - 'Hobbies: Television'
+      - 'Likes Pets: True'
+  - BIAquestion: Is the following information correct for Julie
+    BIAchoices:
+      - 'First Name: Julie'
+      - 'Last Name: Alderson'
+      - 'Age: 44'
+      - 'Hobbies: Sewing'
+      - 'Likes Pets: True'
+---
+mandatory: True
+question: Truth of Data
+subquestion: |
+  
+  ${ BIAquestion_table }
+  
+buttons:
+  - Restart: restart
+  - Exit: exit
+---
+table: BIAquestion_table
+rows:  BIAquestions
+columns:
+  - Info: |
+      row_item['BIAchoices']
+  - Correct Data: |
+      row_item['BIAanswers'].true_values()
+---
+question: |
+  ${ BIAquestions[i]['BIAquestion'] }
+fields:
+  - no label: BIAquestions[i]['BIAanswers']
+    datatype: checkboxes
+    code: BIAquestions[i]['BIAchoices']
+---
